@@ -1,14 +1,14 @@
-import User from "../../schema/User";
 import { hashPassword } from "./../services/user";
 import createHttpError from "http-errors";
 import express from "express";
 import passport from "passport";
-import { UserDocument } from "../../schema/User";
+import { logUser, UserDocument } from "../../schema/User";
 import expressAsyncHandler from "express-async-handler";
 import { createResponse } from "../helper/response";
 import { catchError, validate } from "../middleware/validation";
 import { createUserTokens, decodeToken } from "../services/passport-jwt";
 import * as userService from "../services/user";
+import { Router, Request, Response } from 'express';
 
 const router = express.Router();
 
@@ -24,6 +24,7 @@ router.post(
   })
 );
 
+
 router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
@@ -36,16 +37,26 @@ router.put(
   })
 );
 
+router.post(
+  "/register",
+  validate("users:create"),
+  catchError,
+  expressAsyncHandler(async (req, res) => {
+    const { email, password, isAdmin, phoneNumber, name, blocked, createdAt} = req.body as UserDocument;
+    const user = await userService.createUser({ email, password, isAdmin, phoneNumber, name, blocked, createdAt });
+    res.send(createResponse(user, "User created successfully!"));
+  })
+);
+
 
 router.post(
   "/register-with-link",
   validate("users:create-with-link"),
   catchError,
   expressAsyncHandler(async (req, res) => {
-    const { email, role } = req.body as IUser;
+    const { email} = req.body as UserDocument;
     const user = await userService.createUserWithResetPasswordLink({
       email,
-      role,
     });
     res.send(createResponse(user, "Reset password link sent successfully!"));
   })

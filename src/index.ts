@@ -6,6 +6,8 @@ import userRoutes from "./apps/routes/userRoutes";
 import User from "./schema/User";
 import { initDB } from "./apps/services/dbConnect";
 import dotenv from 'dotenv'; // Import the dotenv package
+import { initPassport } from "./apps/services/passport-jwt";
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -23,6 +25,7 @@ app.use(cors({ origin: 'http://localhost:3000' }));
 
 // Connect to MongoDB
 initDB();
+initPassport();
 
 async function exampleUsage() {
   try {
@@ -30,7 +33,12 @@ async function exampleUsage() {
     const newUser = await User.create({
       isAdmin: true,
       name: "John",
-      phoneNumber: "1234567890",
+      phoneNumber: "123",
+      email:"test@gmail.com",
+      password:"123",
+      blocked: false,
+      createdAt:"5-31-2024",
+
     });
 
     console.log("New user created:", newUser);
@@ -39,22 +47,15 @@ async function exampleUsage() {
   }
 }
 
-
+//exampleUsage();
 // Use userRoutes
 app.use("/api/user", userRoutes);
 
-// Start the server
-app.post('/api/data', (req: Request, res: Response) => {
-  // Assuming the request body contains JSON data
-  const requestData = req.body;
-
-  // Do something with the data (e.g., save it to a database)
-  console.log('Received data:', requestData);
-
-  // Respond with a success message
-  res.json({ message: 'Data received successfully', data: requestData });
+app.get('/check', (req: Request, res: Response) => {
+  // Check if the server is reachable
+  
+    res.status(200).json({ message: 'Server is reachable' });
 });
-
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

@@ -20,12 +20,18 @@ export const createUserWithResetPasswordLink = async (data: {
 export const createUser = async (data: {
   email: string;
   password: string;
+  isAdmin:boolean; 
+  phoneNumber:string;
+  name:string; 
+  blocked:boolean;
+  createdAt:string;
 }) => {
-  const user = await User.create({ ...data, active: true });
+  const hashedPassword = await hashPassword(data.password);
+  const user = await User.create({ ...data, password: hashedPassword, active: true });
   return user;
 };
 
-export const updateUser = async (userId: string, data: Partial<IUser>) => {
+export const updateUser = async (userId: string, data: Partial<UserDocument>) => {
   const user = await User.findOneAndUpdate({ _id: userId }, data, {
     new: true,
     projection: "-password",

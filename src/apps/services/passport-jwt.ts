@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import passport from "passport";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
-import  {UserDocument}  from "../../schema/User";
+import  {logUser, UserDocument}  from "../../schema/User";
 import createError from "http-errors";
 import * as userService from "./user";
 import dotenv from 'dotenv';
@@ -54,6 +54,7 @@ export const initPassport = (): void => {
           }
 
           const validate = await isValidPassword(password, user.password);
+          
           if (!validate) {
             done(createError(401, "Invalid email or password"), false);
             return;
@@ -68,7 +69,7 @@ export const initPassport = (): void => {
   );
 };
 
-export const createUserTokens = (user: Omit<UserDocument, "password">) => {
+export const createUserTokens = (user: Omit<logUser, "password">) => {
   const jwtSecret = process.env.JWT_SECRET ?? "";
   const token = jwt.sign(user, jwtSecret);
   return { accessToken: token, refreshToken: "" };
@@ -77,5 +78,5 @@ export const createUserTokens = (user: Omit<UserDocument, "password">) => {
 export const decodeToken = (token: string) => {
   const jwtSecret = process.env.JWT_SECRET ?? "";
   const decode = jwt.decode(token);
-  return decode as UserDocument;
+  return decode as logUser;
 };

@@ -26,11 +26,11 @@ export const password = check("password")
   .bail()
   .withMessage("Password is required")
   .isStrongPassword({
-    minLength: 8,
-    minLowercase: 1,
-    minUppercase: 1,
-    minNumbers: 1,
-    minSymbols: 1,
+    minLength: 3,
+    // minLowercase: 1,
+    // minUppercase: 1,
+    // minNumbers: 1,
+    // minSymbols: 1,
   })
   .bail()
   .withMessage("Enter strong password");
@@ -51,13 +51,7 @@ export const createUser = [
       }
       return true;
     }),
-  password,
-  check("role")
-    .exists()
-    .bail()
-    .withMessage("Role is required")
-    .notEmpty()
-    .bail()
+  password
 ];
 
 export const createUserWithLink = [

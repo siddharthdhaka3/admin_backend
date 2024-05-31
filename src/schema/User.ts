@@ -1,4 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+export interface logUser {
+  password: string;
+}
 
 export interface UserDocument{
   isAdmin: boolean;
