@@ -27,10 +27,10 @@ export const password = check("password")
   .withMessage("Password is required")
   .isStrongPassword({
     minLength: 3,
-    // minLowercase: 1,
-    // minUppercase: 1,
-    // minNumbers: 1,
-    // minSymbols: 1,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
   })
   .bail()
   .withMessage("Enter strong password");

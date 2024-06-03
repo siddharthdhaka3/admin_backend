@@ -31,11 +31,11 @@ async function exampleUsage() {
   try {
     // Create a new user
     const newUser = await User.create({
-      isAdmin: true,
-      name: "John",
+      isAdmin: false,
+      name: "john",
       phoneNumber: "123",
-      email:"test@gmail.com",
-      password:"123",
+      email:"t@gmail.com",
+      password:"$2b$12$D3Zda3jv5ZzQ/kJeZkk91uK5YsJIrhk4gnlSBD.j/.Hz4HkQxbR/u",
       blocked: false,
       createdAt:"5-31-2024",
 
@@ -51,11 +51,17 @@ async function exampleUsage() {
 // Use userRoutes
 app.use("/api/user", userRoutes);
 
-app.get('/check', (req: Request, res: Response) => {
-  // Check if the server is reachable
-  
-    res.status(200).json({ message: 'Server is reachable' });
-});
+// app.get('/api/user/all', async (req, res) => {
+//   try {
+//     // Fetch all users from the database
+//     const users = await User.find();
+//     res.json(users);
+//   } catch (error) {
+//     console.error('Error fetching users:', error);
+//     res.status(500).json({ error: 'Failed to fetch users' });
+//   }
+// });
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

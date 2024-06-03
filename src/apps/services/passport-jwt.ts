@@ -67,16 +67,44 @@ export const initPassport = (): void => {
       }
     )
   );
+
+  passport.use(
+    "jwt",
+    new Strategy(
+      {
+        secretOrKey: JWT_SECRET,
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      },
+      async (payload, done) => {
+        try {
+          console.log(payload);
+          
+          const user = await userService.getUserByEmail(payload.email); // Fetch user based on payload.userId
+
+          if (!user) {
+            return done(createError(401, "Unauthorized userrrrr"), false);
+          }
+
+          // If user is found, return the user
+          return done(null, user);
+        } catch (error) {
+          return done(error, false);
+        }
+      }
+    )
+  );
+
+
 };
 
 export const createUserTokens = (user: Omit<logUser, "password">) => {
-  const jwtSecret = process.env.JWT_SECRET ?? "";
+  const jwtSecret = process.env.JWT_SECRET ?? JWT_SECRET;
   const token = jwt.sign(user, jwtSecret);
   return { accessToken: token, refreshToken: "" };
 };
 
 export const decodeToken = (token: string) => {
-  const jwtSecret = process.env.JWT_SECRET ?? "";
+  const jwtSecret = JWT_SECRET;
   const decode = jwt.decode(token);
   return decode as logUser;
 };

@@ -2,7 +2,7 @@ import { hashPassword } from "./../services/user";
 import createHttpError from "http-errors";
 import express from "express";
 import passport from "passport";
-import { logUser, UserDocument } from "../../schema/User";
+import User, { logUser, UserDocument } from "../../schema/User";
 import expressAsyncHandler from "express-async-handler";
 import { createResponse } from "../helper/response";
 import { catchError, validate } from "../middleware/validation";
@@ -24,6 +24,15 @@ router.post(
   })
 );
 
+router.get(
+  "/all",
+  //passport.authenticate("jwt", {session: false}),
+  catchError,
+  expressAsyncHandler(async(req, res)=> {
+    const users = await User.find();
+    res.json(users);
+  })
+)
 
 router.put(
   "/:id",
@@ -42,6 +51,8 @@ router.post(
   validate("users:create"),
   catchError,
   expressAsyncHandler(async (req, res) => {
+    console.log(req.body);
+    
     const { email, password, isAdmin, phoneNumber, name, blocked, createdAt} = req.body as UserDocument;
     const user = await userService.createUser({ email, password, isAdmin, phoneNumber, name, blocked, createdAt });
     res.send(createResponse(user, "User created successfully!"));
