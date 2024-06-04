@@ -26,7 +26,7 @@ router.post(
 
 router.get(
   "/all",
-  //passport.authenticate("jwt", {session: false}),
+  passport.authenticate("jwt", {session: false}),
   catchError,
   expressAsyncHandler(async(req, res)=> {
     const users = await User.find();

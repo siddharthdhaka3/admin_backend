@@ -77,12 +77,14 @@ export const initPassport = (): void => {
       },
       async (payload, done) => {
         try {
+          console.log("this is bloody payload");
+          
           console.log(payload);
           
           const user = await userService.getUserByEmail(payload.email); // Fetch user based on payload.userId
-
-          if (!user) {
-            return done(createError(401, "Unauthorized userrrrr"), false);
+          const isAdmin = user?.isAdmin;
+          if (!user || !isAdmin) {
+            return done(createError(401, "Unauthorized user"), false);
           }
 
           // If user is found, return the user
