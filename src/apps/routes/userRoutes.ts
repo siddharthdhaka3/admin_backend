@@ -32,7 +32,7 @@ router.get(
     const users = await User.find();
     res.json(users);
   })
-)
+);
 
 router.put(
   "/:id",
@@ -40,16 +40,22 @@ router.put(
   validate("users:update"),
   catchError,
   expressAsyncHandler(async (req, res) => {
-    console.log("bodydy");
-    
-    console.log(req.body);
-
     const user = req.params.id;
     const result = await userService.updateUser(user, req.body);
     res.send(createResponse(user, "User updated successfully!"));
   })
 );
 
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  catchError,
+  expressAsyncHandler(async (req, res) => {
+    const user = req.params.id;
+    const result = await userService.deleteUser(user);
+    res.send(createResponse(user, "User deleted successfully!"));
+  })
+);
 
 router.post(
   "/register",
@@ -61,7 +67,6 @@ router.post(
     res.send(createResponse(user, "User created successfully!"));
   })
 );
-
 
 router.post(
   "/register-with-link",
@@ -75,7 +80,5 @@ router.post(
     res.send(createResponse(user, "Reset password link sent successfully!"));
   })
 );
-
-
 
 export default router;
