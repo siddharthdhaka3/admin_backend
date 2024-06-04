@@ -40,19 +40,22 @@ router.put(
   validate("users:update"),
   catchError,
   expressAsyncHandler(async (req, res) => {
+    console.log("bodydy");
+    
+    console.log(req.body);
+
     const user = req.params.id;
     const result = await userService.updateUser(user, req.body);
     res.send(createResponse(user, "User updated successfully!"));
   })
 );
 
+
 router.post(
   "/register",
   validate("users:create"),
   catchError,
-  expressAsyncHandler(async (req, res) => {
-    console.log(req.body);
-    
+  expressAsyncHandler(async (req, res) => {    
     const { email, password, isAdmin, phoneNumber, name, blocked, createdAt} = req.body as UserDocument;
     const user = await userService.createUser({ email, password, isAdmin, phoneNumber, name, blocked, createdAt });
     res.send(createResponse(user, "User created successfully!"));

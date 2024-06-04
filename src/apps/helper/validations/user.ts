@@ -54,6 +54,30 @@ export const createUser = [
   password
 ];
 
+export const updateUser = [
+  check("email")
+    .optional()
+    .isEmail()
+    .withMessage("Enter valid email"),
+  check("name")
+    .optional()
+    .notEmpty()
+    .withMessage("Name cannot be empty"),
+  check("phoneNumber")
+    .optional()
+    .isMobilePhone("any")
+    .withMessage("Enter valid phone number"),
+  check("isAdmin")
+    .optional()
+    .isBoolean()
+    .withMessage("isAdmin must be a boolean value"),
+  check("blocked")
+    .optional()
+    .isBoolean()
+    .withMessage("Blocked must be a boolean value"),
+];
+
+
 export const createUserWithLink = [
   check("email")
     .exists()

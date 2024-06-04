@@ -77,10 +77,7 @@ export const initPassport = (): void => {
       },
       async (payload, done) => {
         try {
-          console.log("this is bloody payload");
-          
-          console.log(payload);
-          
+
           const user = await userService.getUserByEmail(payload.email); // Fetch user based on payload.userId
           const isAdmin = user?.isAdmin;
           if (!user || !isAdmin) {

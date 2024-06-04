@@ -51,17 +51,6 @@ async function exampleUsage() {
 // Use userRoutes
 app.use("/api/user", userRoutes);
 
-// app.get('/api/user/all', async (req, res) => {
-//   try {
-//     // Fetch all users from the database
-//     const users = await User.find();
-//     res.json(users);
-//   } catch (error) {
-//     console.error('Error fetching users:', error);
-//     res.status(500).json({ error: 'Failed to fetch users' });
-//   }
-// });
-
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

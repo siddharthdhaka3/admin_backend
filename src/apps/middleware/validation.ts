@@ -7,6 +7,7 @@ import {
   createUser,
   createUserWithLink,
   password,
+  updateUser,
 } from "../helper/validations/user";
 
 export const validate = (validationName: string): any[] => {
@@ -16,6 +17,9 @@ export const validate = (validationName: string): any[] => {
     }
     case "users:create": {
       return createUser;
+    }
+    case "user:update": {
+      return updateUser;
     }
     case "users:create-with-link": {
       return createUserWithLink;
