@@ -26,8 +26,7 @@ export const createUser = async (data: {
   blocked:boolean;
   createdAt:string;
 }) => {
-  const hashedPassword = await hashPassword(data.password);
-  const user = await User.create({ ...data, password: hashedPassword, active: true });
+  const user = await User.create({ ...data, active: true });
   return user;
 };
 

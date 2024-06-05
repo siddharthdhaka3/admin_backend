@@ -1,4 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import bcrypt from "bcrypt";
+import { hashPassword } from "../apps/services/user";
 export interface logUser {
   password: string;
 }
@@ -25,6 +27,13 @@ const userSchema = new Schema<UserDocument>({
 }, 
 { timestamps: true }
 );
+
+userSchema.pre("save", async function (next) {
+  if (this.password) {
+    this.password = await hashPassword(this.password);
+  }
+  next();
+});
 
 // const User: UserModel = mongoose.model<UserDocument>("User", userSchema);
 
