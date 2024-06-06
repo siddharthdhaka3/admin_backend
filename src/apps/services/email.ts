@@ -26,6 +26,6 @@ export const resetPasswordEmailTemplate = (token = ""): string => `
 <html>
   <body>
     <h3>Welcome to app</h3>
-    <p>Click <a href="${FE_BASE_URL}/newUser?token=${token}">here</a> to reset your password</p>
+    <p>Click <a href="${FE_BASE_URL}/newUser?token=${token}">here</a> to register yourself</p>
   </body>
 </html>`;

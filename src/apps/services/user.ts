@@ -13,7 +13,7 @@ export const createUserWithResetPasswordLink = async (data: {
   const { accessToken } = await createUserTokens(user!);
   await sendEmail({
     to: user!.email,
-    subject: "Reset password",
+    subject: "Register Yourself",
     html: resetPasswordEmailTemplate(accessToken),
   });
   console.log(user);
@@ -42,12 +42,13 @@ export const updateUser = async (userId: string, data: Partial<UserDocument>) =>
   return user;
 };
 export const updateUserByEmail = async (email: string, data: Partial<UserDocument>) => {
+  console.log(data.password);
+  
   if (data.password) {
     // Hash the password before updating
     data.password = await hashPassword(data.password);
   }
 
-  // Find and update the user document
   const user = await User.findOneAndUpdate({ email: email}, data, {
     new: true,
   });

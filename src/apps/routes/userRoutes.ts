@@ -72,6 +72,32 @@ router.put(
   })
 );
 
+router.post(
+  "/reset-password",
+  passport.authenticate("jwt_no_admin", { session: false }),
+  validate("users:set-new-password"),
+  catchError,
+  expressAsyncHandler(async (req, res) => {
+    console.log(req.body);
+    const password = await hashPassword(req.body['Password']);
+    if (req.user && typeof req.user === 'object') {
+      if ('email' in req.user) {
+        const email:any = req.user.email;
+        console.log(password);
+        const user = await User.findOneAndUpdate(
+          { email: email },
+          { $set: { password: password } },
+          { new: true }
+        );
+        if(user){
+          res.send(createResponse(user, "Password updated successfully!"));
+
+        }
+      }
+    }    
+  })
+);
+
 router.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
