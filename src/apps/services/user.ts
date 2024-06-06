@@ -42,7 +42,7 @@ export const updateUser = async (userId: string, data: Partial<UserDocument>) =>
   return user;
 };
 export const updateUserByEmail = async (email: string, data: Partial<UserDocument>) => {
-  console.log(data.password);
+  console.log(data);
   
   if (data.password) {
     // Hash the password before updating
