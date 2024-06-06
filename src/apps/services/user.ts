@@ -42,9 +42,14 @@ export const updateUser = async (userId: string, data: Partial<UserDocument>) =>
   return user;
 };
 export const updateUserByEmail = async (email: string, data: Partial<UserDocument>) => {
+  if (data.password) {
+    // Hash the password before updating
+    data.password = await hashPassword(data.password);
+  }
+
+  // Find and update the user document
   const user = await User.findOneAndUpdate({ email: email}, data, {
     new: true,
-    projection: "-password",
   });
   return user;
 };

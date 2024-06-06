@@ -92,6 +92,33 @@ export const initPassport = (): void => {
     )
   );
 
+  passport.use(
+    "jwt_no_admin",
+    new Strategy(
+      {
+        secretOrKey: jwt_secret,
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      },
+      async (payload, done) => {
+        try {
+          // Fetch user based on payload.userId
+          const user = await userService.getUserByEmail(payload.email);
+          
+          // If user is found and the email matches the decoded email
+          if (user && user.email === payload.email) {
+            return done(null, user);
+          } else {
+            // If user is not found or email doesn't match, return an unauthorized error
+            return done(createError(401, "Unauthorized user"), false);
+          }
+        } catch (error) {
+          // If an error occurs, return the error
+          return done(error, false);
+        }
+      }
+    )
+  );
+  
 
 };
 

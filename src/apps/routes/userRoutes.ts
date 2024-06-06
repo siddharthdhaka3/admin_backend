@@ -50,15 +50,25 @@ router.put(
 
 router.put(
   "/email/:email",
-  //passport.authenticate("jwt", { session: false }),
-  //validate("users:update"),
+  passport.authenticate("jwt_no_admin", { session: false }),
+  validate("users:update"),
   catchError,
   expressAsyncHandler(async (req, res) => {
-    console.log(res);
-    
-    const user = req.params.email;
-    const result = await userService.updateUserByEmail(user, req.body);
-    res.send(createResponse(user, "User updated successfully!"));
+    // console.log(req.body);
+    console.log("req.user is here");
+    if (req.user && typeof req.user === 'object') {
+      // Check if req.user has the email property
+      if ('email' in req.user) {
+        const email = req.user.email;
+        console.log(email);
+        if(email !== req.params.email){
+          res.status(401).json({ message: 'User not authenticated' });
+        }
+      }
+    }
+    const em = req.params.email;
+    const result = await userService.updateUserByEmail(em, req.body);
+    res.send(createResponse(em, "User updated successfully!"));
   })
 );
 
