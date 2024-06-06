@@ -18,9 +18,10 @@ router.post(
   validate("users:login"),
   catchError,
   expressAsyncHandler(async (req, res, next) => {
-    res.send(
-      createResponse({ ...createUserTokens(req.user!), user: req.user })
-    );
+    res.json({...createUserTokens(req.user!), user: req.user})
+  //   res.send(
+  //     createResponse({ ...createUserTokens(req.user!), user: req.user })
+  // };
   })
 );
 
@@ -30,7 +31,8 @@ router.get(
   catchError,
   expressAsyncHandler(async(req, res)=> {
     const users = await User.find();
-    res.send(createResponse(users, "All users retrieved"));
+    res.json(users);
+    //res.send(createResponse(users, "All users retrieved"));
   })
 );
 
@@ -39,9 +41,23 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   validate("users:update"),
   catchError,
-  expressAsyncHandler(async (req, res) => {
+  expressAsyncHandler(async (req, res) => {    
     const user = req.params.id;
     const result = await userService.updateUser(user, req.body);
+    res.send(createResponse(user, "User updated successfully!"));
+  })
+);
+
+router.put(
+  "/email/:email",
+  //passport.authenticate("jwt", { session: false }),
+  //validate("users:update"),
+  catchError,
+  expressAsyncHandler(async (req, res) => {
+    console.log(res);
+    
+    const user = req.params.email;
+    const result = await userService.updateUserByEmail(user, req.body);
     res.send(createResponse(user, "User updated successfully!"));
   })
 );
@@ -73,6 +89,7 @@ router.post(
   validate("users:create-with-link"),
   catchError,
   expressAsyncHandler(async (req, res) => {
+    
     const { email} = req.body as UserDocument;
     const user = await userService.createUserWithResetPasswordLink({
       email,

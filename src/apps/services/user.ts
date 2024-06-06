@@ -6,6 +6,8 @@ import { createUserTokens } from "./passport-jwt";
 export const createUserWithResetPasswordLink = async (data: {
   email: string;
 }) => {
+  console.log(data);
+  
   await User.create(data);
   const user = await getUserByEmail(data.email);
   const { accessToken } = await createUserTokens(user!);
@@ -14,6 +16,8 @@ export const createUserWithResetPasswordLink = async (data: {
     subject: "Reset password",
     html: resetPasswordEmailTemplate(accessToken),
   });
+  console.log(user);
+  
   return user;
 };
 
@@ -37,6 +41,14 @@ export const updateUser = async (userId: string, data: Partial<UserDocument>) =>
   });
   return user;
 };
+export const updateUserByEmail = async (email: string, data: Partial<UserDocument>) => {
+  const user = await User.findOneAndUpdate({ email: email}, data, {
+    new: true,
+    projection: "-password",
+  });
+  return user;
+};
+
 
 export const deleteUser = async (userId: string) => {
   const user = await User.deleteOne({ _id: userId });

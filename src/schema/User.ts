@@ -18,9 +18,9 @@ export interface UserDocument{
 // export interface UserModel extends Model<UserDocument> {}
 
 const userSchema = new Schema<UserDocument>({
-  isAdmin: { type: Boolean, required: true },
-  name: { type: String, required: true },
-  phoneNumber: { type: String, required: true },
+  isAdmin: { type: Boolean, default: false },
+  name: { type: String },
+  phoneNumber: { type: String },
   email: { type: String, required: true, unique: true },
   blocked: { type: Boolean, default: false },
   password: { type: String },

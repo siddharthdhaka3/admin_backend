@@ -16,7 +16,6 @@ dotenv.config();
 
 // const app: Application = express();
 const app: Express = express();
-console.log(process.env.PORT);
 
 // Set up middleware
 app.use(bodyParser.json());

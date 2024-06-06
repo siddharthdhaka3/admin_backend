@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import passport from "passport";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
@@ -13,13 +13,12 @@ const isValidPassword = async function (value: string, password: string) {
   const compare = await bcrypt.compare(value, password);
   return compare;
 };
-console.log(process.env.JWT_SECRET);
-const JWT_SECRET = "32323asdasd";
+const jwt_secret: string = process.env.JWT_SECRET as string;
 export const initPassport = (): void => {
   passport.use(
     new Strategy(
       {
-        secretOrKey: JWT_SECRET,
+        secretOrKey: jwt_secret,
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       },
       async (token, done) => {
@@ -72,7 +71,7 @@ export const initPassport = (): void => {
     "jwt",
     new Strategy(
       {
-        secretOrKey: JWT_SECRET,
+        secretOrKey: jwt_secret,
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       },
       async (payload, done) => {
@@ -97,13 +96,11 @@ export const initPassport = (): void => {
 };
 
 export const createUserTokens = (user: Omit<logUser, "password">) => {
-  const jwtSecret = process.env.JWT_SECRET ?? JWT_SECRET;
-  const token = jwt.sign(user, jwtSecret);
+  const token = jwt.sign(user, jwt_secret);
   return { accessToken: token, refreshToken: "" };
 };
 
 export const decodeToken = (token: string) => {
-  const jwtSecret = JWT_SECRET;
   const decode = jwt.decode(token);
   return decode as logUser;
 };
