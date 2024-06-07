@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import User, { UserDocument } from "../../schema/User";
-import { resetPasswordEmailTemplate, sendEmail } from "./email";
+import { forgotPasswordEmailTemplate, resetPasswordEmailTemplate, sendEmail } from "./email";
 import { createUserTokens } from "./passport-jwt";
 
 export const createUserWithResetPasswordLink = async (data: {
@@ -20,6 +20,23 @@ export const createUserWithResetPasswordLink = async (data: {
   
   return user;
 };
+
+export const forgotPassword = async (data: {
+  email: string;
+}) => {
+  console.log(data);
+  const user = await getUserByEmail(data.email);
+  const { accessToken } = await createUserTokens(user!);
+  await sendEmail({
+    to: user!.email,
+    subject: "Reset your password",
+    html: forgotPasswordEmailTemplate(accessToken),
+  });
+  console.log(user);
+  
+  return user;
+};
+
 
 export const createUser = async (data: {
   email: string;
@@ -42,16 +59,24 @@ export const updateUser = async (userId: string, data: Partial<UserDocument>) =>
   return user;
 };
 export const updateUserByEmail = async (email: string, data: Partial<UserDocument>) => {
+  console.log("don");
+
   console.log(data);
+  console.log(email);
+  
+  console.log("don");
+  
   
   if (data.password) {
-    // Hash the password before updating
     data.password = await hashPassword(data.password);
   }
 
   const user = await User.findOneAndUpdate({ email: email}, data, {
     new: true,
   });
+
+  console.log(user);
+  
   return user;
 };
 

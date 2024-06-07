@@ -138,7 +138,6 @@ export const initPassport = (): void => {
             return done(createError(401, "Unauthorized user"), false);
           }
         } catch (error) {
-          // If an error occurs, return the error
           return done(error, false);
         }
       }
@@ -151,6 +150,11 @@ export const initPassport = (): void => {
 export const createUserTokens = (user: Omit<logUser, "password">) => {
   const token = jwt.sign(user, jwt_secret);
   return { accessToken: token, refreshToken: "" };
+};
+
+export const createRefreshToken = (user: Omit<logUser, "password">) => {
+  const refreshToken = jwt.sign(user, jwt_secret, { expiresIn: '7d' });
+  return refreshToken;
 };
 
 export const decodeToken = (token: string) => {

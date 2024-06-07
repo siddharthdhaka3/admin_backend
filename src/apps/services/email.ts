@@ -29,3 +29,18 @@ export const resetPasswordEmailTemplate = (token = ""): string => `
     <p>Click <a href="${FE_BASE_URL}/newUser?token=${token}">here</a> to register yourself</p>
   </body>
 </html>`;
+
+export const sendForgotPasswordEmail = async (mailOptions: Mail.Options): Promise<any> => {
+  try {
+    return await transporter.sendMail(mailOptions);
+  } catch (error: any) {
+    createHttpError(500, { message: error.message });
+  }
+};
+export const forgotPasswordEmailTemplate = (token = ""): string => `
+<html>
+  <body>
+    <h3>Welcome to app</h3>
+    <p>Click <a href="${FE_BASE_URL}/forgot-password?token=${token}">here</a> to register yourself</p>
+  </body>
+</html>`;

@@ -37,14 +37,12 @@ export const catchError = expressAsyncHandler(
     
     const isError = errors.isEmpty();
     if (!isError) {
-      const data = { errors: errors.array() };
-      console.log(data);
-      
+      const data = { errors: errors.array() };      
       throw createHttpError(400, {
         message: "Validation error!hai",
         data,
       });
-    } else {
+    } else {      
       next();
     }
   }
