@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcrypt";
-import { hashPassword } from "../apps/services/user";
+import { hashPassword } from "../services/user";
 export interface logUser {
   password: string;
 }
@@ -13,6 +13,7 @@ export interface UserDocument{
   password: string;
   blocked: boolean;
   createdAt: string;
+  refreshToken:string;
 }
 
 // export interface UserModel extends Model<UserDocument> {}
@@ -24,6 +25,7 @@ const userSchema = new Schema<UserDocument>({
   email: { type: String, required: true, unique: true },
   blocked: { type: Boolean, default: false },
   password: { type: String },
+  refreshToken:{ type: String, defualt: "" },
 }, 
 { timestamps: true }
 );

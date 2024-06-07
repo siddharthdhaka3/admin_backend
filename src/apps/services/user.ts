@@ -1,8 +1,10 @@
 import bcrypt from "bcrypt";
-import User, { UserDocument } from "../../schema/User";
+import User, { UserDocument } from "../schema/User";
 import { forgotPasswordEmailTemplate, resetPasswordEmailTemplate, sendEmail } from "./email";
 import { createUserTokens } from "./passport-jwt";
-
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 export const createUserWithResetPasswordLink = async (data: {
   email: string;
 }) => {
@@ -32,7 +34,6 @@ export const forgotPassword = async (data: {
     subject: "Reset your password",
     html: forgotPasswordEmailTemplate(accessToken),
   });
-  console.log(user);
   
   return user;
 };
@@ -59,14 +60,6 @@ export const updateUser = async (userId: string, data: Partial<UserDocument>) =>
   return user;
 };
 export const updateUserByEmail = async (email: string, data: Partial<UserDocument>) => {
-  console.log("don");
-
-  console.log(data);
-  console.log(email);
-  
-  console.log("don");
-  
-  
   if (data.password) {
     data.password = await hashPassword(data.password);
   }
@@ -75,9 +68,42 @@ export const updateUserByEmail = async (email: string, data: Partial<UserDocumen
     new: true,
   });
 
-  console.log(user);
   
   return user;
+};
+
+const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET as string;
+export const refreshAccessToken = async(refreshTokenReceived:string, ) => {
+  try{
+    const decodedToken:any = jwt.verify(
+      refreshTokenReceived, 
+      refresh_token_secret
+    )
+    console.log("decoded token data");
+    
+    const user:any = await User.findById(decodedToken?._id)
+    console.log(user);
+    
+    if(!user){
+      console.log("no user");
+      
+    }
+    
+    if(refreshTokenReceived !== user.refreshToken){
+      console.log(refreshTokenReceived);
+      
+      console.log("false token");
+    }
+    const {accessToken, refreshToken} = await createUserTokens({decodedToken}); 
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+    
+    
+
+  }catch(error){
+    console.log(error);
+    
+  }
+
 };
 
 

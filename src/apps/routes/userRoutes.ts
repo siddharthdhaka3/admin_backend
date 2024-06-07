@@ -2,27 +2,46 @@ import { hashPassword } from "./../services/user";
 import createHttpError from "http-errors";
 import express from "express";
 import passport from "passport";
-import User, { logUser, UserDocument } from "../../schema/User";
+import User, { logUser, UserDocument } from "../schema/User";
 import expressAsyncHandler from "express-async-handler";
 import { createResponse } from "../helper/response";
 import { catchError, validate } from "../middleware/validation";
 import { createUserTokens, decodeToken } from "../services/passport-jwt";
 import * as userService from "../services/user";
 import { Router, Request, Response } from 'express';
-
 const router = express.Router();
-
+import { refreshAccessToken } from "../services/user";
+import refreshAccessTokenController from "../controllers/refreshAccessToken";
 router.post(
   "/login",
   passport.authenticate("login", { session: false }),
   validate("users:login"),
   catchError,
   expressAsyncHandler(async (req, res, next) => {
+    const {refreshToken, accessToken} = createUserTokens(req.user!);
+    const user1 = await User.findOneAndUpdate({ email: req.body.email}, {refreshToken}, {
+      new: true,
+    });
+    console.log(user1);
+    
     res.json({...createUserTokens(req.user!), user: req.user})
   //   res.send(
   //     createResponse({ ...createUserTokens(req.user!), user: req.user })
   // };
   })
+);
+
+router.post(
+  "/refresh",
+  refreshAccessTokenController,
+  expressAsyncHandler(async(req, res)=> {
+
+    
+    
+    res.json("done");
+
+  }) 
+
 );
 
 router.get(
@@ -86,7 +105,7 @@ router.put(
         
         
         const result = await userService.updateUserByEmail(email, req.body);
-        res.send(createResponse(result, "password updated successfully!"));
+            res.send(createResponse(result, "password updated successfully!"));
 
       }
     }

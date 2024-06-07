@@ -3,7 +3,7 @@ import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import passport from "passport";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
-import  {logUser, UserDocument}  from "../../schema/User";
+import User, {logUser, UserDocument}  from "../schema/User";
 import createError from "http-errors";
 import * as userService from "./user";
 import dotenv from 'dotenv';
@@ -14,6 +14,8 @@ const isValidPassword = async function (value: string, password: string) {
   return compare;
 };
 const jwt_secret: string = process.env.JWT_SECRET as string;
+const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET as string;
+
 export const initPassport = (): void => {
   passport.use(
     new Strategy(
@@ -147,15 +149,12 @@ export const initPassport = (): void => {
 
 };
 
-export const createUserTokens = (user: Omit<logUser, "password">) => {
+export const createUserTokens = (user: Omit<any, "password">) => {
   const token = jwt.sign(user, jwt_secret);
-  return { accessToken: token, refreshToken: "" };
+  const refreshToken = jwt.sign(user, refresh_token_secret, { expiresIn: '7d'});    
+  return { accessToken: token, refreshToken: refreshToken };
 };
 
-export const createRefreshToken = (user: Omit<logUser, "password">) => {
-  const refreshToken = jwt.sign(user, jwt_secret, { expiresIn: '7d' });
-  return refreshToken;
-};
 
 export const decodeToken = (token: string) => {
   const decode = jwt.decode(token);

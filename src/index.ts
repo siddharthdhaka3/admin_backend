@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cors from "cors";
 import userRoutes from "./apps/routes/userRoutes";
-import User from "./schema/User";
+import User from "./apps/schema/User";
 import { initDB } from "./apps/services/dbConnect";
 import dotenv from 'dotenv'; // Import the dotenv package
 import { initPassport } from "./apps/services/passport-jwt";
