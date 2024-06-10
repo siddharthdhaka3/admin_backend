@@ -150,7 +150,7 @@ export const initPassport = (): void => {
 };
 
 export const createUserTokens = (user: Omit<any, "password">) => {
-  const token = jwt.sign(user, jwt_secret);
+  const token = jwt.sign(user, jwt_secret, { expiresIn: '1m'});
   const refreshToken = jwt.sign(user, refresh_token_secret, { expiresIn: '7d'});    
   return { accessToken: token, refreshToken: refreshToken };
 };

@@ -10,21 +10,28 @@ import { createUserTokens, decodeToken } from "../services/passport-jwt";
 import * as userService from "../services/user";
 import { Router, Request, Response } from 'express';
 const router = express.Router();
-import { refreshAccessToken } from "../services/user";
 import refreshAccessTokenController from "../controllers/refreshAccessToken";
+import {jwtDecode} from 'jwt-decode';
 router.post(
   "/login",
   passport.authenticate("login", { session: false }),
   validate("users:login"),
   catchError,
-  expressAsyncHandler(async (req, res, next) => {
+  expressAsyncHandler(async (req:any, res, next) => {
     const {refreshToken, accessToken} = createUserTokens(req.user!);
     const user1 = await User.findOneAndUpdate({ email: req.body.email}, {refreshToken}, {
       new: true,
     });
-    console.log(user1);
-    
-    res.json({...createUserTokens(req.user!), user: req.user})
+
+    const decodedAccessToken: any = jwtDecode(accessToken);
+    const accessTokenExpiry = decodedAccessToken.exp; // Extract expiry from decoded token
+    res.json({
+      refreshToken,
+      accessToken,
+      accessTokenExpiry,
+      user: req.user,
+    });
+    // res.json({...createUserTokens(req.user!), user: req.user})
   //   res.send(
   //     createResponse({ ...createUserTokens(req.user!), user: req.user })
   // };
@@ -35,11 +42,7 @@ router.post(
   "/refresh",
   refreshAccessTokenController,
   expressAsyncHandler(async(req, res)=> {
-
-    
-    
     res.json("done");
-
   }) 
 
 );
@@ -99,11 +102,7 @@ router.put(
     if (req.user && typeof req.user === 'object') {
       // Check if req.user has the email property
       if ('email' in req.user) {
-        const email:any = req.user.email;
-        console.log(email);
-        console.log("here is your email");
-        
-        
+        const email:any = req.user.email;        
         const result = await userService.updateUserByEmail(email, req.body);
             res.send(createResponse(result, "password updated successfully!"));
 

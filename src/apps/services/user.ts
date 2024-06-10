@@ -72,40 +72,6 @@ export const updateUserByEmail = async (email: string, data: Partial<UserDocumen
   return user;
 };
 
-const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET as string;
-export const refreshAccessToken = async(refreshTokenReceived:string, ) => {
-  try{
-    const decodedToken:any = jwt.verify(
-      refreshTokenReceived, 
-      refresh_token_secret
-    )
-    console.log("decoded token data");
-    
-    const user:any = await User.findById(decodedToken?._id)
-    console.log(user);
-    
-    if(!user){
-      console.log("no user");
-      
-    }
-    
-    if(refreshTokenReceived !== user.refreshToken){
-      console.log(refreshTokenReceived);
-      
-      console.log("false token");
-    }
-    const {accessToken, refreshToken} = await createUserTokens({decodedToken}); 
-    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
-    
-    
-
-  }catch(error){
-    console.log(error);
-    
-  }
-
-};
-
 
 export const deleteUser = async (userId: string) => {
   const user = await User.deleteOne({ _id: userId });
